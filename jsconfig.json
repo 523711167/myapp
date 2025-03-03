@@ -9,7 +9,8 @@
       "@hooks/*": ["hooks/*"],
       "@utils/*": ["utils/*"],
       "@styles/*": ["styles/*"],
-      "@services/*": ["services/*"]
+      "@services/*": ["services/*"],
+      "@auth/*": ["auth/*"]
     }
   },
   "include": ["src"]

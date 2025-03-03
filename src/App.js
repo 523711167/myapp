@@ -3,6 +3,8 @@ import './App.scss';
 
 import Demo from '@components/demo';
 import { useScrollToTop } from '@hooks/use-scroll-to-top';
+import { AuthProvider } from '@auth/context/jwt/auth-provider';
+import ProgressBar from '@components/progress-bar/progress-bar';
 
 function App() {
 
@@ -19,9 +21,10 @@ function App() {
   useScrollToTop();
 
   return (
-    <div className="App">
-      <Demo />
-    </div>
+    <AuthProvider>
+        <ProgressBar />
+        <Demo />
+    </AuthProvider>
   );
 }
 

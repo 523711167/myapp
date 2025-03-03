@@ -11,6 +11,14 @@ module.exports = {
       '@utils': path.resolve(__dirname, 'src/utils'),
       '@styles': path.resolve(__dirname, 'src/styles'),
       '@services': path.resolve(__dirname, 'src/services'),
+      '@auth': path.resolve(__dirname, 'src/auth'),
     },
   },
+  style: {
+    sass: {
+      loaderOptions: {
+        api: "modern"
+      }
+    }
+  }
 }; 
