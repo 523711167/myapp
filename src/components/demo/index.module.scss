@@ -1,0 +1,7 @@
+@use 'styles/demo/_colors.scss' as *;
+
+.logo {
+    width: 100px;
+    height: 100px;
+    background-color: $back-color;
+}
