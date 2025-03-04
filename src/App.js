@@ -1,11 +1,13 @@
 import React from 'react';
-import './App.scss';
 
+import MotionLazy from '@components/animate/motion-lazy';
 import Demo from '@components/demo';
 import { useScrollToTop } from '@hooks/use-scroll-to-top';
 import { AuthProvider } from '@auth/context/jwt/auth-provider';
 import { AuthConsumer } from '@auth/context/jwt/auth-comsumer';
 import ProgressBar from '@components/progress-bar/progress-bar';
+
+import './App.scss';
 
 function App() {
 
@@ -23,10 +25,12 @@ function App() {
 
   return (
     <AuthProvider>
+      <MotionLazy>
         <ProgressBar />
         <AuthConsumer>
             <Demo />
         </AuthConsumer>
+      </MotionLazy>
     </AuthProvider>
   );
 }
