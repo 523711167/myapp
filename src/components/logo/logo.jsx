@@ -14,17 +14,17 @@ function Logo({ disabledLink = false, sx }) {
             <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 512 512">
                 <defs>
                     <linearGradient id="BG1" x1="100%" x2="50%" y1="9.946%" y2="100%">
-                        <stop offset="0%" stop-color="#1E90FF" />
-                        <stop offset="100%" stop-color="#00BFFF" />
+                        <stop offset="0%" stopColor="#1E90FF" />
+                        <stop offset="100%" stopColor="#00BFFF" />
                     </linearGradient>
 
                     <linearGradient id="BG2" x1="50%" x2="50%" y1="0%" y2="150%">
-                        <stop offset="0%" stop-color="#87CEFA" />
-                        <stop offset="100%" stop-color="#00BFFF" />
+                        <stop offset="0%" stopColor="#87CEFA" />
+                        <stop offset="100%" stopColor="#00BFFF" />
                     </linearGradient>
                 </defs>
 
-                <g fill="#00BFFF" fill-rule="evenodd" stroke="none" stroke-width="1">
+                <g fill="#00BFFF" fillRule="evenodd" stroke="none" strokeWidth="1">
 
                     <path
                         fill="url(#BG1)"
