@@ -10,7 +10,8 @@
       "@utils/*": ["utils/*"],
       "@styles/*": ["styles/*"],
       "@services/*": ["services/*"],
-      "@auth/*": ["auth/*"]
+      "@auth/*": ["auth/*"],
+      "@routes/*": ["routes/*"],
     }
   },
   "include": ["src"]

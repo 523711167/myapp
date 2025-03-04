@@ -12,6 +12,7 @@ module.exports = {
       '@styles': path.resolve(__dirname, 'src/styles'),
       '@services': path.resolve(__dirname, 'src/services'),
       '@auth': path.resolve(__dirname, 'src/auth'),
+      '@routes': path.resolve(__dirname, 'src/routes')
     },
   },
   style: {
