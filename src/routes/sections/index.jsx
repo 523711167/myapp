@@ -1,7 +1,7 @@
 import { useRoutes, Navigate } from 'react-router-dom';
 
+import { authRoutes } from '@routes/sections/auth';
 import { PATH_AFTER_LOGIN } from '@/config-global';
-
 
 
 function Routes() {
