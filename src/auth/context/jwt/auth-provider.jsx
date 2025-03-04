@@ -56,6 +56,8 @@ export function AuthProvider({ children }) {
   const initialize = useCallback( async () => {
     try {
 
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
 
       if (accessToken && isValidToken(accessToken)) {

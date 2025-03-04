@@ -4,6 +4,7 @@ import './App.scss';
 import Demo from '@components/demo';
 import { useScrollToTop } from '@hooks/use-scroll-to-top';
 import { AuthProvider } from '@auth/context/jwt/auth-provider';
+import { AuthConsumer } from '@auth/context/jwt/auth-comsumer';
 import ProgressBar from '@components/progress-bar/progress-bar';
 
 function App() {
@@ -23,7 +24,9 @@ function App() {
   return (
     <AuthProvider>
         <ProgressBar />
-        <Demo />
+        <AuthConsumer>
+            <Demo />
+        </AuthConsumer>
     </AuthProvider>
   );
 }
