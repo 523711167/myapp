@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
   const initialize = useCallback( async () => {
     try {
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
 
@@ -105,10 +105,10 @@ export function AuthProvider({ children }) {
 
   // LOGIN
   const login = useCallback(async (email, password) => {
-    const data = {
-      email,
-      password,
-    };
+    // const data = {
+    //   email,
+    //   password,
+    // };
 
     const response = {
         data: {
@@ -135,12 +135,12 @@ export function AuthProvider({ children }) {
   // REGISTER
   const register = useCallback(
     async (email, password, firstName, lastName) => {
-      const data = {
-        email,
-        password,
-        firstName,
-        lastName,
-      };
+      // const data = {
+      //   email,
+      //   password,
+      //   firstName,
+      //   lastName,
+      // };
 
       const response = {
         data: {

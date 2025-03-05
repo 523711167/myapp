@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import GuestGuard from '@auth/guard/guest-guard';
+import AuthClassicLayout from '@layouts/auth/classic';
 
 
 // JWT
@@ -19,9 +20,9 @@ const authJwt = {
       {
         path: 'login',
         element: (
-          // <AuthClassicLayout>
+          <AuthClassicLayout>
             <JwtLoginPage />
-          // </AuthClassicLayout>
+          </AuthClassicLayout>
         ),
       },
       {
