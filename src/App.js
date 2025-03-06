@@ -7,6 +7,7 @@ import { AuthProvider } from '@auth/context/jwt/auth-provider';
 import { AuthConsumer } from '@auth/context/jwt/auth-comsumer';
 import ProgressBar from '@components/progress-bar/progress-bar';
 import Routes from '@routes/sections/index';
+import { ProConfigProvider } from '@ant-design/pro-components';
 
 import './App.scss';
 
@@ -25,13 +26,15 @@ function App() {
   useScrollToTop();
 
   return (
-    <AuthProvider>
-      <MotionLazy>
-        <ProgressBar />
-        <AuthConsumer>
+    <AuthProvider >
+      <ProConfigProvider hashed={false}>
+        <MotionLazy>
+          <ProgressBar />
+          <AuthConsumer>
             <Routes />
-        </AuthConsumer>
-      </MotionLazy>
+          </AuthConsumer>
+        </MotionLazy>
+      </ProConfigProvider>
     </AuthProvider>
   );
 }

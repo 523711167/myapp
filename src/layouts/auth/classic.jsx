@@ -87,7 +87,7 @@ function AuthClassicLayout({ children }) {
         
         {upMd && renderContent}
 
-        {children && React.cloneElement(children, { sx: { flex: '1', minWidth: '480px' } })}
+        {children && React.cloneElement(children, { sx: { flex: '1' } })}
       </Flex >
   )
 }   
