@@ -1,8 +1,9 @@
 import { useRoutes, Navigate } from 'react-router-dom';
 
 import { authRoutes } from '@routes/sections/auth';
-import { PATH_AFTER_LOGIN } from '@/config-global';
+import { mainRoutes } from "@routes/sections/main";
 
+import { PATH_AFTER_LOGIN } from '@/config-global';
 
 function Routes() {
     return useRoutes([
@@ -18,7 +19,7 @@ function Routes() {
         // ...dashboardRoutes,
     
         // Main routes
-        // ...mainRoutes,
+        ...mainRoutes,
     
         // No match 404
         { path: '*', element: <Navigate to="/404" replace /> },

@@ -13,7 +13,8 @@ module.exports = {
       '@services': path.resolve(__dirname, 'src/services'),
       '@auth': path.resolve(__dirname, 'src/auth'),
       '@routes': path.resolve(__dirname, 'src/routes'),
-      '@layouts': path.resolve(__dirname, 'src/layouts')
+      '@layouts': path.resolve(__dirname, 'src/layouts'),
+      '@sections': path.resolve(__dirname, 'src/sections')
     },
   },
   style: {
@@ -22,5 +23,16 @@ module.exports = {
         api: "modern"
       }
     }
+  },
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:28888',
+        changeOrigin: true,
+        pathRewrite: {
+          "^/api": ''
+        }
+      }
+    },
   }
 }; 

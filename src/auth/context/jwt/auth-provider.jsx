@@ -2,7 +2,14 @@ import { useEffect, useReducer, useCallback, useMemo } from 'react';
 //
 
 import { AuthContext } from '@auth/context/jwt/auth-context';
-import { isValidToken, setSession } from '@auth/context/jwt/utils';
+import {
+  isValidToken,
+  setAccessTokenSession,
+  setIdTokenSession,
+  setRefreshTokenSession,
+  setSession
+} from '@auth/context/jwt/utils';
+import axios, {API_ENDPOINTS} from "@utils/axios";
 
 
 const operationTypes = {
@@ -55,7 +62,6 @@ export function AuthProvider({ children }) {
 
   const initialize = useCallback( async () => {
     try {
-
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
@@ -104,30 +110,35 @@ export function AuthProvider({ children }) {
   }, [initialize]);
 
   // LOGIN
-  const login = useCallback(async (email, password) => {
-    // const data = {
-    //   email,
-    //   password,
-    // };
+  const login = useCallback(async ({ username, password }) => {
+    const data = {
+      username,
+      password,
+      client_id: 'admin',
+      client_secret: '123123',
+      grant_type: 'password_admin',
+      scope: 'openid'
+    };
 
-    const response = {
-        data: {
-            accessToken: '123',
-            user: {
-                id: 1,
-                name: 'John Doe',
-            },
-        },
-    }
+    const response = await axios.post(API_ENDPOINTS.auth.login,
+        data,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+    );
 
-    const { accessToken, user } = response.data;
+    const { data: { access_token, refresh_token, id_token } } = response.data;
 
-    setSession(accessToken);
+    setAccessTokenSession(access_token);
+    setRefreshTokenSession(refresh_token)
+    setIdTokenSession(id_token)
 
     dispatch({
       type: operationTypes.LOGIN,
       payload: {
-        user,
+
       },
     });
   }, []);

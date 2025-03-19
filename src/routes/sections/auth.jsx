@@ -7,7 +7,6 @@ import AuthClassicLayout from '@layouts/auth/classic';
 
 // JWT
 const JwtLoginPage = lazy(() => import('@pages/auth/jwt/login'));
-const JwtRegisterPage = lazy(() => import('@pages/auth/jwt/register'));
 
 const authJwt = {
     path: 'jwt',
@@ -24,15 +23,7 @@ const authJwt = {
             <JwtLoginPage />
           </AuthClassicLayout>
         ),
-      },
-      {
-        path: 'register',
-        element: (
-          // <AuthClassicLayout title="Manage the job more effectively with Minimal">
-            <JwtRegisterPage />
-          //  </AuthClassicLayout>
-        ),
-      },
+      }
     ],
   };
 

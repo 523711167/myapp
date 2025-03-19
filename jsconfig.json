@@ -12,7 +12,8 @@
       "@services/*": ["services/*"],
       "@auth/*": ["auth/*"],
       "@routes/*": ["routes/*"],
-      "@layouts/*": ["layouts/*"]
+      "@layouts/*": ["layouts/*"],
+      "@sections/*": ["sections/*"]
     }
   },
   "include": ["src"]

@@ -6,6 +6,15 @@ const { up, down, between, only } = createBreakpoints({});
 
 // type Query = 'up' | 'down' | 'between' | 'only';
 
+// xs: 0,
+// phone
+// sm: 600,
+// tablet
+// md: 900,
+// small laptop
+// lg: 1200,
+// desktop
+// xl: 1536
 export function useResponsive(query, start, end) {
 
   const mediaUp = useMediaQuery(up(start));

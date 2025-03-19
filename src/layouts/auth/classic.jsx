@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Flex, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 
@@ -38,7 +37,6 @@ const METHODS = [
 function AuthClassicLayout({ children }) {
 
   const upMd = useResponsive('up', 'md');
-  console.log('upMd', upMd);
 
   const renderLogo = (
     <Logo
@@ -51,7 +49,7 @@ function AuthClassicLayout({ children }) {
   );
 
   const renderContent = (
-    <Flex vertical flex={2} justify='space-around' align='center'>
+    <Flex vertical flex={3} justify='space-around' align='center'>
 
         <p style={{
           fontSize: '2.5rem',
@@ -82,12 +80,12 @@ function AuthClassicLayout({ children }) {
   )
 
   return (
-      <Flex justify='flex-start' style={{ height: '100vh' }}>
+      <Flex style={{ height: '100vh' }}>
         {renderLogo}
         
         {upMd && renderContent}
 
-        {children && React.cloneElement(children, { sx: { flex: '1' } })}
+        {children }
       </Flex >
   )
 }   
