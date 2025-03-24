@@ -8,7 +8,10 @@ const axiosInstance = axios.create({ baseURL: HOST_API });
 
 axiosInstance.interceptors.response.use(
     (response) => response,
-    (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+    (error) => {
+        console.error(error)
+        return Promise.reject(error.response?.data?.msg || '服务器内部错误')
+    }
 );
 
 export default axiosInstance;

@@ -1,20 +1,16 @@
-import {useState} from "react";
-
 import {LoginForm, ProFormCheckbox, ProFormText, setAlpha} from "@ant-design/pro-components";
-import {Alert, Flex, Space, Tabs, theme} from "antd";
+import {Alert, Space, Tabs, theme} from "antd";
 import {
     AlipayCircleOutlined,
     LockOutlined, TaobaoCircleOutlined,
     UserOutlined,
     WeiboCircleOutlined
 } from "@ant-design/icons";
-
-
 import {useResponsive} from "@hooks/use-responsive";
+import {useState} from "react";
 import {useAuthContext} from "@auth/hooks/use-auth-context";
-import {PATH_AFTER_LOGIN} from "@/config-global";
 import {useSearchParams} from "@routes/hook/use-search-params";
-
+import {PATH_AFTER_LOGIN} from "@/config-global";
 
 
 function Login({ sx }) {
@@ -23,8 +19,8 @@ function Login({ sx }) {
     const { login } = useAuthContext();
     const [loginType, setLoginType] = useState('account');
     const upMd = useResponsive('up', 'md');
+    const [errorMsg, setErrorMsg] = useState('');
     const searchParams = useSearchParams();
-    const [errorMsg, setErrorMsg] = useState(null);
 
     const returnTo = searchParams.get('returnTo');
 
@@ -39,6 +35,7 @@ function Login({ sx }) {
     const containerStyle = {
         flex: '2',
         backgroundColor: token.colorBgContainer,
+        padding: upMd ? '200px 90px' : '100px 5px',
         ...sx
     }
 
@@ -47,23 +44,12 @@ function Login({ sx }) {
             await login?.(record);
             window.location.href = returnTo || PATH_AFTER_LOGIN;
         } catch (error) {
-            console.error(error)
             setErrorMsg(typeof error === 'string' ? error : error.message);
-
         }
     }
 
     return (
-        <Flex style={containerStyle}>
-            {
-                errorMsg && (
-                    <Alert message={errorMsg}
-                           closable
-                           type="error"
-                           showIcon />
-                )
-            }
-
+        <div style={containerStyle}>
             <LoginForm
                 onFinish={onFinish}
                 title="拼叨叨的个人项目"
@@ -76,6 +62,17 @@ function Login({ sx }) {
                     </Space>
                 }
             >
+                {
+                    errorMsg && (
+                        <Alert
+                            showIcon
+                            message={errorMsg}
+                            type="warning"
+                            closable
+                        />
+                    )
+                }
+
                 <Tabs
                     centered
                     activeKey={loginType}
@@ -91,7 +88,7 @@ function Login({ sx }) {
                         size: 'large',
                         prefix: <UserOutlined className={'prefixIcon'}/>,
                     }}
-                    placeholder={'用户名: admin'}
+                    placeholder={'用户名: 123'}
                     rules={[
                         {
                             required: true,
@@ -136,7 +133,7 @@ function Login({ sx }) {
                             );
                         },
                     }}
-                    placeholder={'密码: admin.pxx'}
+                    placeholder={'密码: 123'}
                     rules={[
                         {
                             required: true,
@@ -155,7 +152,7 @@ function Login({ sx }) {
                     </ProFormCheckbox>
                 </div>
             </LoginForm>
-        </Flex>
+        </div>
     )
 }
 
