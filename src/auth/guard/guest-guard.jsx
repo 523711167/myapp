@@ -7,7 +7,12 @@ import { useRouter } from '@routes/hook/use-router';
 import { useAuthContext } from '@auth/hooks/use-auth-context';
 
 
-
+/**
+ * 用于无需认证的页面，直接返回首页
+ * @param children
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function GuestGuard({ children }) {
     const router = useRouter();
   

@@ -1,14 +1,20 @@
+import {useState} from "react";
+
 import {LoginForm, ProFormCheckbox, ProFormText, setAlpha} from "@ant-design/pro-components";
-import {Space, Tabs, theme} from "antd";
+import {Alert, Flex, Space, Tabs, theme} from "antd";
 import {
     AlipayCircleOutlined,
     LockOutlined, TaobaoCircleOutlined,
     UserOutlined,
     WeiboCircleOutlined
 } from "@ant-design/icons";
+
+
 import {useResponsive} from "@hooks/use-responsive";
-import {useState} from "react";
 import {useAuthContext} from "@auth/hooks/use-auth-context";
+import {PATH_AFTER_LOGIN} from "@/config-global";
+import {useSearchParams} from "@routes/hook/use-search-params";
+
 
 
 function Login({ sx }) {
@@ -17,6 +23,10 @@ function Login({ sx }) {
     const { login } = useAuthContext();
     const [loginType, setLoginType] = useState('account');
     const upMd = useResponsive('up', 'md');
+    const searchParams = useSearchParams();
+    const [errorMsg, setErrorMsg] = useState(null);
+
+    const returnTo = searchParams.get('returnTo');
 
     const iconStyles = {
         marginInlineStart: '16px',
@@ -29,21 +39,31 @@ function Login({ sx }) {
     const containerStyle = {
         flex: '2',
         backgroundColor: token.colorBgContainer,
-        padding: upMd ? '240px 90px' : '100px 5px',
         ...sx
     }
 
     const onFinish = async record => {
         try {
-            const res = await login?.(record);
-        } catch (e) {
-            console.error(e)
-        }
+            await login?.(record);
+            window.location.href = returnTo || PATH_AFTER_LOGIN;
+        } catch (error) {
+            console.error(error)
+            setErrorMsg(typeof error === 'string' ? error : error.message);
 
+        }
     }
 
     return (
-        <div style={containerStyle}>
+        <Flex style={containerStyle}>
+            {
+                errorMsg && (
+                    <Alert message={errorMsg}
+                           closable
+                           type="error"
+                           showIcon />
+                )
+            }
+
             <LoginForm
                 onFinish={onFinish}
                 title="拼叨叨的个人项目"
@@ -135,7 +155,7 @@ function Login({ sx }) {
                     </ProFormCheckbox>
                 </div>
             </LoginForm>
-        </div>
+        </Flex>
     )
 }
 

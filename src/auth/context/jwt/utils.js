@@ -4,7 +4,7 @@ import {  message } from 'antd';
 import {paths} from "@routes/paths";
 
 
-function jwtDecode(token) {
+export function jwtDecode(token) {
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
   const jsonPayload = decodeURIComponent(
@@ -20,6 +20,18 @@ function jwtDecode(token) {
 
 export const isValidToken = accessToken => {
   if (!accessToken) {
+    return false;
+  }
+
+  const decoded = jwtDecode(accessToken);
+
+  const currentTime = Date.now() / 1000;
+
+  return decoded.exp > currentTime;
+};
+
+export const isRequireRefresh = accessToken => {
+  if (isValidToken(accessToken)) {
     return false;
   }
 

@@ -3,7 +3,8 @@ import { useEffect, useReducer, useCallback, useMemo } from 'react';
 
 import { AuthContext } from '@auth/context/jwt/auth-context';
 import {
-  isValidToken,
+  isRequireRefresh,
+  isValidToken, jwtDecode,
   setAccessTokenSession,
   setIdTokenSession,
   setRefreshTokenSession,
@@ -120,7 +121,8 @@ export function AuthProvider({ children }) {
       scope: 'openid'
     };
 
-    const response = await axios.post(API_ENDPOINTS.auth.login,
+    const response = await axios.post(
+        API_ENDPOINTS.auth.login,
         data,
         {
           headers: {
@@ -134,24 +136,57 @@ export function AuthProvider({ children }) {
     setAccessTokenSession(access_token);
     setRefreshTokenSession(refresh_token)
     setIdTokenSession(id_token)
+    const claims = jwtDecode(access_token);
+    console.log(claims);
 
     dispatch({
       type: operationTypes.LOGIN,
       payload: {
-
+        username: claims.sub,
+        scope: [...claims.scope]
       },
     });
   }, []);
 
+  const refreshToken = useCallback(
+      () => {
+
+        if (isRequireRefresh(sessionStorage.getItem('accessToken'))) {
+
+
+        }
+
+        const data = {
+          client_id: 'admin',
+          client_secret: '123123',
+          grant_type: 'refresh_token',
+          refresh_token:  sessionStorage.getItem('refreshToken')
+        };
+
+        axios.post(
+            API_ENDPOINTS.auth.login,
+            data,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': undefined
+              }
+            }
+        ).then(({ data: { access_token, refresh_token, id_token } }) => {
+          setAccessTokenSession(access_token);
+          setRefreshTokenSession(refresh_token)
+          setIdTokenSession(id_token)
+        }).catch(err => {
+          console.error(err)
+        })
+
+      },
+      []
+  )
+
   // REGISTER
   const register = useCallback(
     async (email, password, firstName, lastName) => {
-      // const data = {
-      //   email,
-      //   password,
-      //   firstName,
-      //   lastName,
-      // };
 
       const response = {
         data: {
@@ -201,8 +236,9 @@ export function AuthProvider({ children }) {
       login,
       register,
       logout,
+      refreshToken,
     }),
-    [login, logout, register, state.user, status]
+    [login, logout, register, refreshToken,state.user, status]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

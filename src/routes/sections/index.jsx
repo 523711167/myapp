@@ -4,6 +4,7 @@ import { authRoutes } from '@routes/sections/auth';
 import { mainRoutes } from "@routes/sections/main";
 
 import { PATH_AFTER_LOGIN } from '@/config-global';
+import {dashboardRoutes} from "@routes/sections/dashboard";
 
 function Routes() {
     return useRoutes([
@@ -16,7 +17,7 @@ function Routes() {
         ...authRoutes,
     
         // Dashboard routes
-        // ...dashboardRoutes,
+        ...dashboardRoutes,
     
         // Main routes
         ...mainRoutes,
