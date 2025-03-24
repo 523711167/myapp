@@ -1,9 +1,12 @@
 import {Outlet} from "react-router-dom";
-import {Suspense} from "react";
+import {lazy, Suspense} from "react";
 import AuthGuard from "@auth/guard/auth-guard";
 import DashboardLayout from "@layouts/dashboard/layout";
 
 
+
+
+const IndexPage = lazy(() => import('@pages/dashboard/app'));
 
 
 export const dashboardRoutes = [
@@ -18,6 +21,9 @@ export const dashboardRoutes = [
                 </DashboardLayout>
             </AuthGuard>
         ),
+        children: [
+            { element: <IndexPage />, index: true },
+        ]
 
     },
 ]

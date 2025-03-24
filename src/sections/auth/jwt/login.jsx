@@ -44,6 +44,7 @@ function Login({ sx }) {
             await login?.(record);
             window.location.href = returnTo || PATH_AFTER_LOGIN;
         } catch (error) {
+            console.error(error)
             setErrorMsg(typeof error === 'string' ? error : error.message);
         }
     }

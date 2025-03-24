@@ -1,18 +1,84 @@
-import React, {useState} from 'react';
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import React from 'react';
+import {
+    AppstoreOutlined,
+    ContainerOutlined, DesktopOutlined,
+    MailOutlined, PieChartOutlined,
+} from '@ant-design/icons';
 import {Breadcrumb, Layout, Menu, theme} from 'antd';
 import {useResponsive} from "@hooks/use-responsive";
 import Logo from "@components/logo/logo";
 
 
 const { Header, Content, Footer, Sider } = Layout;
-const items = [UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map(
-    (icon, index) => ({
-        key: String(index + 1),
-        icon: React.createElement(icon),
-        label: `nav ${index + 1}`,
-    }),
-);
+const items = [
+    {
+        key: '1',
+        icon: <PieChartOutlined />,
+        label: '工作台',
+    },
+    {
+        key: '2',
+        icon: <DesktopOutlined />,
+        label: 'Option 2',
+    },
+    {
+        key: '3',
+        icon: <ContainerOutlined />,
+        label: 'Option 3',
+    },
+    {
+        key: 'sub1',
+        label: '订单管理',
+        icon: <MailOutlined />,
+        children: [
+            {
+                key: '5',
+                label: '订单查看',
+            },
+            {
+                key: '6',
+                label: 'Option 6',
+            },
+            {
+                key: '7',
+                label: 'Option 7',
+            }
+        ],
+    },
+    {
+        key: 'sub2',
+        label: '系统管理',
+        icon: <AppstoreOutlined />,
+        children: [
+            {
+                key: '9',
+                label: '菜单管理',
+            },
+            {
+                key: '10',
+                label: '用户管理',
+            },
+            {
+                key: '20',
+                label: '角色管理',
+            },
+            {
+                key: '21',
+                label: '字典管理',
+            },
+            {
+                key: 'sub3',
+                label: '日志管理',
+                children: [
+                    {
+                        key: '11',
+                        label: '操作日志',
+                    }
+                ],
+            },
+        ],
+    },
+];
 
 export default function DashboardLayout({ children }) {
 
@@ -54,23 +120,22 @@ export default function DashboardLayout({ children }) {
                 items={items}
             />
         </Sider>
-
     )
 
 
     return (
-        <Layout>
+        <Layout style={{
+            height: '100vh'
+        }}>
             <Header
                 style={{
                     display: 'flex',
-                    alignItems: 'center',
+                    // alignItem: 'center',
                 }}
             >
-
-                <div style={{
-                }}>
-                    <Logo/>
-                </div>
+                <Logo sx={{
+                    marginTop: '12px'
+                }}/>
                 { !upMd && horizontalMenu}
             </Header>
             <Layout>

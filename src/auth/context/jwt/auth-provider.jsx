@@ -68,18 +68,18 @@ export function AuthProvider({children}) {
             await new Promise((resolve) => setTimeout(resolve, 500));
 
             const accessToken = sessionStorage.getItem(STORAGE_KEY);
-            debugger
+
             if (accessToken && isValidToken(accessToken)) {
                 setAccessTokenSession(accessToken);
 
-                const {data: {sub}} = await axios.post(
+                const { data } = await axios.post(
                     API_ENDPOINTS.auth.userinfo,
                 );
 
                 dispatch({
                     type: operationTypes.INITIAL,
                     payload: {
-                        user: sub
+                        user: data?.data?.sub
                     },
                 });
             } else {
@@ -127,7 +127,7 @@ export function AuthProvider({children}) {
             data,
             {
                 headers: {
-                    'Authentication': '',
+                    'authorization': '',
                     'Content-Type': 'multipart/form-data'
                 }
             }
@@ -224,6 +224,10 @@ export function AuthProvider({children}) {
 
     const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
 
+    //刷新登录页
+    // 第一次 正常渲染
+    // 第二次 副作用dispatch
+    // 第三次 status变化
     const status = state.loading ? 'loading' : checkAuthenticated;
 
     const memoizedValue = useMemo(

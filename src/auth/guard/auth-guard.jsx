@@ -36,6 +36,7 @@ export default function AuthGuard({ children }) {
   const [checked, setChecked] = useState(false);
 
   const check = useCallback(() => {
+
     if (!authenticated) {
       const searchParams = new URLSearchParams({ returnTo: window.location.href }).toString();
 
