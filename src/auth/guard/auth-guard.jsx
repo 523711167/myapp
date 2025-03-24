@@ -43,7 +43,7 @@ export default function AuthGuard({ children }) {
 
       const href = `${loginPath}?${searchParams}`;
 
-      router.replace("/auth/jwt/login?returnTo=http%3A%2F%2Flocalhost%3A3000%2Fdashboard");
+      router.replace(href);
     } else {
       setChecked(true);
     }

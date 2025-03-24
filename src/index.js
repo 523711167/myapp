@@ -12,7 +12,7 @@ import App from '@/App';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
       <HelmetProvider>
           <BrowserRouter>
               <Suspense>
@@ -20,7 +20,7 @@ root.render(
               </Suspense>
           </BrowserRouter>
       </HelmetProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 

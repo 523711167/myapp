@@ -17,28 +17,14 @@ axiosInstance.interceptors.response.use(
 export default axiosInstance;
 
 export const API_ENDPOINTS = {
-    chat: '/api/chat',
-    kanban: '/api/kanban',
-    calendar: '/api/calendar',
     auth: {
         me: '/api/auth/me',
         login: '/api/yuyu-auth/oauth2/token',
-        register: '/api/auth/register',
+        userinfo: '/api/yuyu-auth/userinfo',
     },
     mail: {
         list: '/api/mail/list',
         details: '/api/mail/details',
         labels: '/api/mail/labels',
-    },
-    post: {
-        list: '/api/post/list',
-        details: '/api/post/details',
-        latest: '/api/post/latest',
-        search: '/api/post/search',
-    },
-    product: {
-        list: '/api/product/list',
-        details: '/api/product/details',
-        search: '/api/product/search',
-    },
+    }
 };

@@ -1,14 +1,14 @@
-import { useEffect, useReducer, useCallback, useMemo } from 'react';
+import {useEffect, useReducer, useCallback, useMemo} from 'react';
 //
 
-import { AuthContext } from '@auth/context/jwt/auth-context';
+import {AuthContext} from '@auth/context/jwt/auth-context';
 import {
-  isRequireRefresh,
-  isValidToken, jwtDecode,
-  setAccessTokenSession,
-  setIdTokenSession,
-  setRefreshTokenSession,
-  setSession
+    isRequireRefresh,
+    isValidToken, jwtDecode,
+    setAccessTokenSession,
+    setIdTokenSession,
+    setRefreshTokenSession,
+    setSession
 } from '@auth/context/jwt/utils';
 import axios, {API_ENDPOINTS} from "@utils/axios";
 
@@ -18,228 +18,229 @@ const operationTypes = {
     LOGIN: 'LOGIN',
     REGISTER: 'REGISTER',
     LOGOUT: 'LOGOUT',
-  };
+};
 
 const initialState = {
-  user: null,
-  loading: true,
+    user: null,
+    // 首次渲染loading组件，然后执行AuthProvider副作用
+    loading: true,
 };
 
 const reducer = (state, action) => {
-  if (action.type === operationTypes.INITIAL) {
-    return {
-      loading: false,
-      user: action.payload.user,
-    };
-  }
-  if (action.type === operationTypes.LOGIN) {
-    return {
-      ...state,
-      user: action.payload.user,
-    };
-  }
-  if (action.type === operationTypes.REGISTER) {
-    return {
-      ...state,
-      user: action.payload.user,
-    };
-  }
-  if (action.type === operationTypes.LOGOUT) {
-    return {
-      ...state,
-      user: null,
-    };
-  }
-  return state;
+
+    if (action.type === operationTypes.INITIAL) {
+        return {
+            loading: false,
+            user: action.payload.user,
+        };
+    }
+    if (action.type === operationTypes.LOGIN) {
+        return {
+            ...state,
+            user: action.payload.user,
+        };
+    }
+    if (action.type === operationTypes.REGISTER) {
+        return {
+            ...state,
+            user: action.payload.user,
+        };
+    }
+    if (action.type === operationTypes.LOGOUT) {
+        return {
+            ...state,
+            user: null,
+        };
+    }
+    return state;
 };
 
 // ----------------------------------------------------------------------
 
 const STORAGE_KEY = 'accessToken';
 
-export function AuthProvider({ children }) {
+export function AuthProvider({children}) {
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+    const [state, dispatch] = useReducer(reducer, initialState);
 
-  const initialize = useCallback( async () => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    const initialize = useCallback(async () => {
+        try {
+            await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
+            const accessToken = sessionStorage.getItem(STORAGE_KEY);
+            debugger
+            if (accessToken && isValidToken(accessToken)) {
+                setAccessTokenSession(accessToken);
 
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
+                const {data: {sub}} = await axios.post(
+                    API_ENDPOINTS.auth.userinfo,
+                );
 
-        const response = {
-          data: {
-            user: {
-              id: 1,
-              name: 'John Doe',
-            },
-          },
+                dispatch({
+                    type: operationTypes.INITIAL,
+                    payload: {
+                        user: sub
+                    },
+                });
+            } else {
+                dispatch({
+                    type: operationTypes.INITIAL,
+                    payload: {
+                        user: null,
+                    },
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            dispatch({
+                type: operationTypes.INITIAL,
+                payload: {
+                    user: null,
+                },
+            });
         }
+    }, []);
 
-        const { user } = response.data;
-
-        dispatch({
-          type: operationTypes.INITIAL,
-          payload: {
-            user,
-          },
-        });
-      } else {
-        dispatch({
-          type: operationTypes.INITIAL,
-          payload: {
-            user: null,
-          },
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      dispatch({
-        type: operationTypes.INITIAL,
-        payload: {
-          user: null,
-        },
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    initialize();  
-  }, [initialize]);
-
-  // LOGIN
-  const login = useCallback(async ({ username, password }) => {
-    const data = {
-      username,
-      password,
-      client_id: 'admin',
-      client_secret: '123123',
-      grant_type: 'password_admin',
-      scope: 'openid'
-    };
-
-    const response = await axios.post(
-        API_ENDPOINTS.auth.login,
-        data,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-    );
-
-    const { data: { access_token, refresh_token, id_token } } = response.data;
-
-    setAccessTokenSession(access_token);
-    setRefreshTokenSession(refresh_token)
-    setIdTokenSession(id_token)
-    const claims = jwtDecode(access_token);
-    console.log(claims);
-
-    dispatch({
-      type: operationTypes.LOGIN,
-      payload: {
-        username: claims.sub,
-        scope: [...claims.scope]
-      },
-    });
-  }, []);
-
-  const refreshToken = useCallback(
-      () => {
-
-        if (isRequireRefresh(sessionStorage.getItem('accessToken'))) {
+    const rand = useMemo(() => {
+        return Math.random() * 10
+    }, [initialize]);
 
 
-        }
+    useEffect(() => {
+        console.log(rand)
+        initialize();
+    }, [initialize]);
 
+    // LOGIN
+    const login = useCallback(async ({username, password}) => {
         const data = {
-          client_id: 'admin',
-          client_secret: '123123',
-          grant_type: 'refresh_token',
-          refresh_token:  sessionStorage.getItem('refreshToken')
+            username,
+            password,
+            client_id: 'admin',
+            client_secret: '123123',
+            grant_type: 'password_admin',
+            scope: 'openid'
         };
 
-        axios.post(
+        const response = await axios.post(
             API_ENDPOINTS.auth.login,
             data,
             {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': undefined
-              }
+                headers: {
+                    'Authentication': '',
+                    'Content-Type': 'multipart/form-data'
+                }
             }
-        ).then(({ data: { access_token, refresh_token, id_token } }) => {
-          setAccessTokenSession(access_token);
-          setRefreshTokenSession(refresh_token)
-          setIdTokenSession(id_token)
-        }).catch(err => {
-          console.error(err)
-        })
+        );
 
-      },
-      []
-  )
+        const {data: {access_token, refresh_token, id_token}} = response.data;
 
-  // REGISTER
-  const register = useCallback(
-    async (email, password, firstName, lastName) => {
+        setAccessTokenSession(access_token);
+        setRefreshTokenSession(refresh_token)
+        setIdTokenSession(id_token)
+        const claims = jwtDecode(access_token);
 
-      const response = {
-        data: {
-          accessToken: '123',
-          user: {
-            id: 1,
-            name: 'John Doe',
-          },
-        },
-      };
-
-      const { accessToken, user } = response.data;
-
-      sessionStorage.setItem(STORAGE_KEY, accessToken);
-
-      dispatch({
-        type: operationTypes.REGISTER,
-        payload: {
-          user,
-        },
-      });
-
+        dispatch({
+            type: operationTypes.LOGIN,
+            payload: {
+                username: claims.sub,
+                scope: [...claims.scope]
+            },
+        });
     }, []);
 
-  // LOGOUT
-  const logout = useCallback(async () => {
-    setSession(null);
-    dispatch({
-      type: operationTypes.LOGOUT,
-    });
-  }, []);
+    const refreshToken = useCallback(
+        () => {
 
-  // ----------------------------------------------------------------------
+            if (isRequireRefresh(sessionStorage.getItem('accessToken'))) {
 
-  const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
 
-  const status = state.loading ? 'loading' : checkAuthenticated;
+            }
 
-  const memoizedValue = useMemo(   
-    () => ({
-      user: state.user,
-      method: 'jwt',
-      loading: status === 'loading',
-      authenticated: status === 'authenticated',
-      unauthenticated: status === 'unauthenticated',
-      //
-      login,
-      register,
-      logout,
-      refreshToken,
-    }),
-    [login, logout, register, refreshToken,state.user, status]
-  );
+            const data = {
+                client_id: 'admin',
+                client_secret: '123123',
+                grant_type: 'refresh_token',
+                refresh_token: sessionStorage.getItem('refreshToken')
+            };
 
-  return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
+            axios.post(
+                API_ENDPOINTS.auth.login,
+                data,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': undefined
+                    }
+                }
+            ).then(({data: {access_token, refresh_token, id_token}}) => {
+                setAccessTokenSession(access_token);
+                setRefreshTokenSession(refresh_token)
+                setIdTokenSession(id_token)
+            }).catch(err => {
+                console.error(err)
+            })
+
+        },
+        []
+    )
+
+    // REGISTER
+    const register = useCallback(
+        async (email, password, firstName, lastName) => {
+
+            const response = {
+                data: {
+                    accessToken: '123',
+                    user: {
+                        id: 1,
+                        name: 'John Doe',
+                    },
+                },
+            };
+
+            const {accessToken, user} = response.data;
+
+            sessionStorage.setItem(STORAGE_KEY, accessToken);
+
+            dispatch({
+                type: operationTypes.REGISTER,
+                payload: {
+                    user,
+                },
+            });
+
+        }, []);
+
+    // LOGOUT
+    const logout = useCallback(async () => {
+        setSession(null);
+        dispatch({
+            type: operationTypes.LOGOUT,
+        });
+    }, []);
+
+    // ----------------------------------------------------------------------
+
+    const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
+
+    const status = state.loading ? 'loading' : checkAuthenticated;
+
+    const memoizedValue = useMemo(
+        () => ({
+            user: state.user,
+            method: 'jwt',
+            loading: status === 'loading',
+            authenticated: status === 'authenticated',
+            unauthenticated: status === 'unauthenticated',
+            //
+            login,
+            register,
+            logout,
+            refreshToken,
+        }),
+        [login, logout, register, refreshToken, state.user, status]
+    );
+
+    return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
 }
