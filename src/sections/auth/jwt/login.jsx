@@ -52,6 +52,19 @@ function Login({ sx }) {
     return (
         <div style={containerStyle}>
             <LoginForm
+                initialValues={{
+                    username: 'admin',
+                    password: '123'
+                }}
+                message={(
+                    errorMsg && <Alert
+                        showIcon
+                        message={errorMsg}
+                        type="warning"
+                        closable
+                        onClose={() => setErrorMsg("")}
+                    />
+                )}
                 onFinish={onFinish}
                 title="拼叨叨的个人项目"
                 actions={
@@ -63,17 +76,6 @@ function Login({ sx }) {
                     </Space>
                 }
             >
-                {
-                    errorMsg && (
-                        <Alert
-                            showIcon
-                            message={errorMsg}
-                            type="warning"
-                            closable
-                        />
-                    )
-                }
-
                 <Tabs
                     centered
                     activeKey={loginType}

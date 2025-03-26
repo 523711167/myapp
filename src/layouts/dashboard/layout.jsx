@@ -7,6 +7,7 @@ import {
 import {Breadcrumb, Layout, Menu, theme} from 'antd';
 import {useResponsive} from "@hooks/use-responsive";
 import Logo from "@components/logo/logo";
+import {useRouter} from "@routes/hook/use-router";
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -46,7 +47,7 @@ const items = [
         ],
     },
     {
-        key: 'sub2',
+        key: 'system',
         label: '系统管理',
         icon: <AppstoreOutlined />,
         children: [
@@ -55,7 +56,7 @@ const items = [
                 label: '菜单管理',
             },
             {
-                key: '10',
+                key: 'user',
                 label: '用户管理',
             },
             {
@@ -87,9 +88,19 @@ export default function DashboardLayout({ children }) {
     } = theme.useToken();
 
     const upMd = useResponsive('up', 'md');
+    const navigate = useRouter();
+
+    const handlerMenuClick = ({ item, key, keyPath, domEvent }) => {
+        const path = keyPath.reverse().reduce((accumulator, currentValue, currentIndex, array) => {
+            return accumulator +  '/' + currentValue
+        }, '/dashboard');
+        navigate.push(path)
+    }
 
     const horizontalMenu = (
         <Menu
+            onSelect={() => console.log(11)}
+            onClick={handlerMenuClick}
             theme="dark"
             mode="horizontal"
             defaultSelectedKeys={['2']}
@@ -109,6 +120,7 @@ export default function DashboardLayout({ children }) {
             }}
         >
             <Menu
+                onClick={handlerMenuClick}
                 theme="dark"
                 mode="inline"
                 defaultSelectedKeys={['1']}
