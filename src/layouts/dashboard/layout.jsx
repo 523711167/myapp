@@ -116,6 +116,7 @@ export default function DashboardLayout({ children }) {
         <Sider
             width={200}
             style={{
+                overflowY: 'auto',
                 background: colorBgContainer,
             }}
         >
@@ -175,6 +176,7 @@ export default function DashboardLayout({ children }) {
                     />
                     <Content
                         style={{
+                            overflowY: 'auto',
                             padding: 24,
                             margin: 0,
                             minHeight: 280,

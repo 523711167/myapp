@@ -1,20 +1,11 @@
 import {ProTable, TableDropdown} from "@ant-design/pro-components";
-import {Button, Dropdown, Space, Tag} from "antd";
-import {EllipsisOutlined, PlusOutlined} from "@ant-design/icons";
-import {useRef} from "react";
+import {Button, message} from "antd";
+import { PlusOutlined} from "@ant-design/icons";
+import {useRef, useState} from "react";
+
 import axios, {API_ENDPOINTS} from "@utils/axios";
+import {addIfExists} from "@utils/obj";
 
-export const waitTimePromise = async (time = 100) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, time);
-    });
-};
-
-export const waitTime = async (time = 100) => {
-    await waitTimePromise(time);
-};
 
 const columns = [
     {
@@ -23,7 +14,7 @@ const columns = [
         width: 48,
     },
     {
-        title: 'username',
+        title: '用户名',
         dataIndex: 'username',
         copyable: true,
         ellipsis: true,
@@ -37,71 +28,72 @@ const columns = [
             ],
         },
     },
-    // {
-    //     disable: true,
-    //     title: 'Status',
-    //     dataIndex: 'state',
-    //     filters: true,
-    //     onFilter: true,
-    //     ellipsis: true,
-    //     valueType: 'select',
-    //     valueEnum: {
-    //         all: { text: 'Very Long'.repeat(50) },
-    //         open: {
-    //             text: 'Unresolved',
-    //             status: 'Error',
-    //         },
-    //         closed: {
-    //             text: 'Resolved',
-    //             status: 'Success',
-    //             disabled: true,
-    //         },
-    //         processing: {
-    //             text: 'In Progress',
-    //             status: 'Processing',
-    //         },
-    //     },
-    // },
-    // {
-    //     disable: true,
-    //     title: 'Labels',
-    //     dataIndex: 'labels',
-    //     search: false,
-    //     renderFormItem: (_, { defaultRender }) => {
-    //         return defaultRender(_);
-    //     },
-    //     render: (_, record) => (
-    //         <Space>
-    //             {record.labels.map(({ name, color }) => (
-    //                 <Tag color={color} key={name}>
-    //                     {name}
-    //                 </Tag>
-    //             ))}
-    //         </Space>
-    //     ),
-    // },
-    // {
-    //     title: 'Creation Time',
-    //     key: 'showTime',
-    //     dataIndex: 'created_at',
-    //     valueType: 'date',
-    //     sorter: true,
-    //     hideInSearch: true,
-    // },
-    // {
-    //     title: 'Creation Time',
-    //     dataIndex: 'created_at',
-    //     valueType: 'dateRange',
-    //     hideInTable: true,
-    //     search: {
-    //         transform: (value) => {
-    //             return {
-    //                 startTime: value[0],
-    //                 endTime: value[1],
-    //             };
-    //         },
-    //     },
-    // },
+    {
+        title: '电子邮箱',
+        dataIndex: 'email',
+        hideInSearch: true
+    },
+    {
+        title: '姓名',
+        dataIndex: 'realName',
+    },
+    {
+        title: '地址',
+        dataIndex: 'address',
+        hideInSearch: true
+    },
+    {
+        title: '电话',
+        dataIndex: 'phone',
+        hideInSearch: true
+    },
+    {
+        title: '生日',
+        dataIndex: 'birthDate',
+        valueType: 'date',
+        hideInSearch: true,
+    },
+    {
+        title: '状态',
+        dataIndex: 'status',
+        valueType: 'select',
+        valueEnum: {
+            1: {
+                text: '启用',
+                status: 'Success',
+            },
+            0: {
+                text: '禁用',
+                status: 'Success',
+            }
+        }
+    },
+    {
+        title: '最近登录时间',
+        dataIndex: 'lastLoginTime',
+        valueType: 'dateTime',
+        hideInSearch: true,
+    },
+    {
+        title: '最近登录时间',
+        dataIndex: 'lastLoginTime',
+        valueType: 'dateTimeRange',
+        hideInTable: true,
+        search: {
+            transform: (value) => {
+                if (value) {
+                    return {
+                        'fromLastLoginTime': value[0],
+                        'toLastLoginTime': value[1],
+                    }
+                }
+                return {
+                    'fromLastLoginTime': null,
+                    'toLastLoginTime': null,
+                }
+            }
+        }
+    },
     {
         title: 'Actions',
         valueType: 'option',
@@ -134,121 +126,119 @@ const columns = [
 function OverviewUserView() {
 
     const actionRef = useRef();
+    const [ param, setParam ] = useState({
+        pageSize: 10,
+        username: '',
+        realName: '',
+        status: null,
+        fromLastLoginTime: null,
+        toLastLoginTime: null
+    });
+    const [messageApi, contextHolder] = message.useMessage();
+
+
+    const request = async (params, sort, filter) => {
+        try {
+            const bodyJson = {};
+            addIfExists(bodyJson, 'current', params.current)
+            addIfExists(bodyJson, 'size', params.pageSize)
+            addIfExists(bodyJson, 'username', params.username)
+            addIfExists(bodyJson, 'realName', params.realName)
+            addIfExists(bodyJson, 'status', params.status)
+            addIfExists(bodyJson, 'fromLastLoginTime', params.fromLastLoginTime)
+            addIfExists(bodyJson, 'toLastLoginTime', params.toLastLoginTime)
+            const {data} = await axios.post(
+                API_ENDPOINTS.user.page,
+                bodyJson
+            );
+            const {data: dataArr, total} = data?.data
+            return {
+                success: true,
+                data: dataArr,
+                total: total
+            }
+        } catch (err) {
+            console.error(err)
+            messageApi.error('服务器开小差了')
+        }
+    };
 
     return (
         <>
+            {contextHolder}
             <ProTable
+                /* 防抖时间 */
+                debounceTime={200}
                 columns={columns}
                 actionRef={actionRef}
                 cardBordered
-                request={async (params, sort, filter) => {
-                    console.log(111, params);
-                    await waitTime(2000);
-                    // return request<{
-                    //     data: GithubIssueItem[];
-                    // }>('https://proapi.azurewebsites.net/github/issues', {
-                    //     params,
-                    // });
-                    // {
-                    //  url: string;
-                    //   id: number;
-                    //   number: number;
-                    //   title: string;
-                    //   labels: {
-                    //     name: string;
-                    //     color: string;
-                    //   }[];
-                    //   state: string;
-                    //   comments: number;
-                    //   created_at: string;
-                    //   updated_at: string;
-                    //   closed_at?: string;
-                    // }
-                    const { data } = await axios.post(
-                        API_ENDPOINTS.user.page,
-                        {
-                            "current": params.current,
-                            "size": params.pageSize,
-                        }
-                    );
-                    console.log(" data?.data?.data" ,data?.data);
-                    return data?.data
+                params={param}
+                request={request}
+                /* 搜索表单的配置 */
+                search={{
+                    showHiddenNum: true,
+                    labelWidth: 'auto',
+                    defaultCollapsed:false
                 }}
                 editable={{
-                type: 'multiple',
-            }}
+                    type: 'multiple',
+                }}
                 columnsState={{
-                persistenceKey: 'pro-table-singe-demos',
-                persistenceType: 'localStorage',
-                defaultValue: {
-                    option: { fixed: 'right', disable: true },
-                },
-                onChange(value) {
-                    console.log('value: ', value);
-                },
-            }}
+                    // persistenceKey: 'pro-table-singe-demos',
+                    // persistenceType: 'localStorage',
+                    defaultValue: {
+                       username: {
+                           disable: true
+                       }
+                    },
+                    value: {
+
+                    },
+                    onChange(value) {
+                            console.log('value: ', value);
+                    },
+                }}
                 rowKey="id"
-                search={{
-                labelWidth: 'auto',
-            }}
+
                 options={{
-                setting: {
-                    listsHeight: 400,
-                },
-            }}
+                    setting: {
+                            listsHeight: 400,
+                    },
+                }}
                 form={{
-                // Since transform is configured, the submitted parameters are different from the defined ones, so they need to be transformed here
-                syncToUrl: (values, type) => {
-                    if (type === 'get') {
-                        return {
-                            ...values,
-                            created_at: [values.startTime, values.endTime],
-                        };
-                    }
-                    return values;
-                },
-            }}
+                    // Since transform is configured, the submitted parameters are different from the defined ones,
+                    // so they need to be transformed here
+                    syncToUrl: (values, type) => {
+                            if (type === 'get') {
+                                return {
+                                    ...values,
+                                    created_at: [values.startTime, values.endTime],
+                                };
+                            }
+                            return values;
+                        },
+                }}
                 pagination={{
-                pageSize: 5,
-                onChange: (page) => console.log(page),
-            }}
-                dateFormatter="string"
-                headerTitle="Advanced Table"
+                    pageSize: param.pageSize,
+                    onShowSizeChange: (current, size) => setParam({ pageSize: size })
+                }}
+                /* form表单时间类型自定义转换 传递给search.transform 再传递给request.param*/
+                dateFormatter={(value, valueType) => {
+                    return value.valueOf();
+                }}
+                headerTitle="用户信息"
                 toolBarRender={() => [
-                <Button
-                    key="button"
-                    icon={<PlusOutlined />}
-                    onClick={() => {
-                        actionRef.current?.reload();
-                    }}
-                    type="primary"
-                >
-                    新增
-                </Button>,
-                <Dropdown
-                    key="menu"
-                    menu={{
-                        items: [
-                            {
-                                label: '1st item',
-                                key: '1',
-                            },
-                            {
-                                label: '2nd item',
-                                key: '2',
-                            },
-                            {
-                                label: '3rd item',
-                                key: '3',
-                            },
-                        ],
-                    }}
-                >
-                    <Button>
-                        <EllipsisOutlined />
+                    <Button
+                        key="button"
+                        icon={<PlusOutlined />}
+                        onClick={() => {
+                            actionRef.current?.reload();
+                        }}
+                        type="primary"
+                    >
+                        新增
                     </Button>
-                </Dropdown>,
-            ]}
+                ]}
                 />
         </>
     )

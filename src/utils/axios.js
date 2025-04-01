@@ -10,7 +10,7 @@ axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
         console.error(error)
-        return Promise.reject(error.response?.data?.msg || '服务器内部错误')
+        return Promise.reject(error.response?.data?.msg || '服务器开小差了')
     }
 );
 
