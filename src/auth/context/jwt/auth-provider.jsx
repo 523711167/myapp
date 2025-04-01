@@ -101,13 +101,7 @@ export function AuthProvider({children}) {
         }
     }, []);
 
-    const rand = useMemo(() => {
-        return Math.random() * 10
-    }, [initialize]);
-
-
     useEffect(() => {
-        console.log(rand)
         initialize();
     }, [initialize]);
 

@@ -2,6 +2,7 @@ import {ProTable, TableDropdown} from "@ant-design/pro-components";
 import {Button, Dropdown, Space, Tag} from "antd";
 import {EllipsisOutlined, PlusOutlined} from "@ant-design/icons";
 import {useRef} from "react";
+import axios, {API_ENDPOINTS} from "@utils/axios";
 
 export const waitTimePromise = async (time = 100) => {
     return new Promise((resolve) => {
@@ -22,8 +23,8 @@ const columns = [
         width: 48,
     },
     {
-        title: 'Title',
-        dataIndex: 'title',
+        title: 'username',
+        dataIndex: 'username',
         copyable: true,
         ellipsis: true,
         tooltip: 'The title will shrink automatically if it is too long',
@@ -36,71 +37,71 @@ const columns = [
             ],
         },
     },
-    {
-        disable: true,
-        title: 'Status',
-        dataIndex: 'state',
-        filters: true,
-        onFilter: true,
-        ellipsis: true,
-        valueType: 'select',
-        valueEnum: {
-            all: { text: 'Very Long'.repeat(50) },
-            open: {
-                text: 'Unresolved',
-                status: 'Error',
-            },
-            closed: {
-                text: 'Resolved',
-                status: 'Success',
-                disabled: true,
-            },
-            processing: {
-                text: 'In Progress',
-                status: 'Processing',
-            },
-        },
-    },
-    {
-        disable: true,
-        title: 'Labels',
-        dataIndex: 'labels',
-        search: false,
-        renderFormItem: (_, { defaultRender }) => {
-            return defaultRender(_);
-        },
-        render: (_, record) => (
-            <Space>
-                {record.labels.map(({ name, color }) => (
-                    <Tag color={color} key={name}>
-                        {name}
-                    </Tag>
-                ))}
-            </Space>
-        ),
-    },
-    {
-        title: 'Creation Time',
-        key: 'showTime',
-        dataIndex: 'created_at',
-        valueType: 'date',
-        sorter: true,
-        hideInSearch: true,
-    },
-    {
-        title: 'Creation Time',
-        dataIndex: 'created_at',
-        valueType: 'dateRange',
-        hideInTable: true,
-        search: {
-            transform: (value) => {
-                return {
-                    startTime: value[0],
-                    endTime: value[1],
-                };
-            },
-        },
-    },
+    // {
+    //     disable: true,
+    //     title: 'Status',
+    //     dataIndex: 'state',
+    //     filters: true,
+    //     onFilter: true,
+    //     ellipsis: true,
+    //     valueType: 'select',
+    //     valueEnum: {
+    //         all: { text: 'Very Long'.repeat(50) },
+    //         open: {
+    //             text: 'Unresolved',
+    //             status: 'Error',
+    //         },
+    //         closed: {
+    //             text: 'Resolved',
+    //             status: 'Success',
+    //             disabled: true,
+    //         },
+    //         processing: {
+    //             text: 'In Progress',
+    //             status: 'Processing',
+    //         },
+    //     },
+    // },
+    // {
+    //     disable: true,
+    //     title: 'Labels',
+    //     dataIndex: 'labels',
+    //     search: false,
+    //     renderFormItem: (_, { defaultRender }) => {
+    //         return defaultRender(_);
+    //     },
+    //     render: (_, record) => (
+    //         <Space>
+    //             {record.labels.map(({ name, color }) => (
+    //                 <Tag color={color} key={name}>
+    //                     {name}
+    //                 </Tag>
+    //             ))}
+    //         </Space>
+    //     ),
+    // },
+    // {
+    //     title: 'Creation Time',
+    //     key: 'showTime',
+    //     dataIndex: 'created_at',
+    //     valueType: 'date',
+    //     sorter: true,
+    //     hideInSearch: true,
+    // },
+    // {
+    //     title: 'Creation Time',
+    //     dataIndex: 'created_at',
+    //     valueType: 'dateRange',
+    //     hideInTable: true,
+    //     search: {
+    //         transform: (value) => {
+    //             return {
+    //                 startTime: value[0],
+    //                 endTime: value[1],
+    //             };
+    //         },
+    //     },
+    // },
     {
         title: 'Actions',
         valueType: 'option',
@@ -141,14 +142,38 @@ function OverviewUserView() {
                 actionRef={actionRef}
                 cardBordered
                 request={async (params, sort, filter) => {
-                console.log(sort, filter);
-                await waitTime(2000);
-                // return request<{
-                //     data: GithubIssueItem[];
-                // }>('https://proapi.azurewebsites.net/github/issues', {
-                //     params,
-                // });
-            }}
+                    console.log(111, params);
+                    await waitTime(2000);
+                    // return request<{
+                    //     data: GithubIssueItem[];
+                    // }>('https://proapi.azurewebsites.net/github/issues', {
+                    //     params,
+                    // });
+                    // {
+                    //  url: string;
+                    //   id: number;
+                    //   number: number;
+                    //   title: string;
+                    //   labels: {
+                    //     name: string;
+                    //     color: string;
+                    //   }[];
+                    //   state: string;
+                    //   comments: number;
+                    //   created_at: string;
+                    //   updated_at: string;
+                    //   closed_at?: string;
+                    // }
+                    const { data } = await axios.post(
+                        API_ENDPOINTS.user.page,
+                        {
+                            "current": params.current,
+                            "size": params.pageSize,
+                        }
+                    );
+                    console.log(" data?.data?.data" ,data?.data);
+                    return data?.data
+                }}
                 editable={{
                 type: 'multiple',
             }}

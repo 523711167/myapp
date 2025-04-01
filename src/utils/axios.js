@@ -26,5 +26,8 @@ export const API_ENDPOINTS = {
         list: '/api/mail/list',
         details: '/api/mail/details',
         labels: '/api/mail/labels',
+    },
+    user: {
+        page: '/api/yuyu-api/user/page'
     }
 };
