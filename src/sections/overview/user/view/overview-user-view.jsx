@@ -56,16 +56,16 @@ const columns = [
     {
         title: '状态',
         dataIndex: 'status',
-        valueType: 'select',
+        // valueType: 'select',
         valueEnum: {
+            0: {
+                text: '禁用',
+                status: 'Error',
+            },
             1: {
                 text: '启用',
                 status: 'Success',
             },
-            0: {
-                text: '禁用',
-                status: 'Success',
-            }
         }
     },
     {
@@ -130,7 +130,7 @@ function OverviewUserView() {
         pageSize: 10,
         username: '',
         realName: '',
-        status: null,
+        status: '',
         fromLastLoginTime: null,
         toLastLoginTime: null
     });
@@ -180,31 +180,38 @@ function OverviewUserView() {
                     labelWidth: 'auto',
                     defaultCollapsed:false
                 }}
-                editable={{
-                    type: 'multiple',
-                }}
+                /* 控制表格每列的fixed disabled order */
                 columnsState={{
                     // persistenceKey: 'pro-table-singe-demos',
                     // persistenceType: 'localStorage',
-                    defaultValue: {
-                       username: {
-                           disable: true
-                       }
-                    },
-                    value: {
-
-                    },
                     onChange(value) {
                             console.log('value: ', value);
                     },
                 }}
-                rowKey="id"
-
+                /* 控制表单的多功能菜单 */
                 options={{
-                    setting: {
-                            listsHeight: 400,
-                    },
+                    density: false,
+                    fullScreen: true,
+                    // 控制齿轮按钮菜单的
+                    setting: false,
+                    // 不知道这个是干什么的
+                    search: true,
                 }}
+                /* 多功能菜单旁新增Dom元素 */
+                toolBarRender={() => [
+                    <Button
+                        key="button"
+                        icon={<PlusOutlined />}
+                        onClick={() => {
+                            actionRef.current?.reload();
+                        }}
+                        type="primary"
+                    >
+                        新增
+                    </Button>
+                ]}
+                rowKey="id"
+                /* 暂时不太理解 */
                 form={{
                     // Since transform is configured, the submitted parameters are different from the defined ones,
                     // so they need to be transformed here
@@ -220,26 +227,14 @@ function OverviewUserView() {
                 }}
                 pagination={{
                     pageSize: param.pageSize,
-                    onShowSizeChange: (current, size) => setParam({ pageSize: size })
+                    onShowSizeChange: (current, size) => setParam( { pageSize: size })
                 }}
-                /* form表单时间类型自定义转换 传递给search.transform 再传递给request.param*/
+                /* form表单时间类型自定义转换 传递给search.transform 再传递给form.syncToUrl 最后传递给request.param*/
                 dateFormatter={(value, valueType) => {
                     return value.valueOf();
                 }}
                 headerTitle="用户信息"
-                toolBarRender={() => [
-                    <Button
-                        key="button"
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                            actionRef.current?.reload();
-                        }}
-                        type="primary"
-                    >
-                        新增
-                    </Button>
-                ]}
-                />
+            />
         </>
     )
 }
