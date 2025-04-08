@@ -1,10 +1,10 @@
 import {ProTable, TableDropdown} from "@ant-design/pro-components";
-import {Button, message} from "antd";
-import { PlusOutlined} from "@ant-design/icons";
+import { message} from "antd";
 import {useRef, useState} from "react";
 
 import axios, {API_ENDPOINTS} from "@utils/axios";
 import {addIfExists} from "@utils/obj";
+import UserCreateFrom from "@sections/overview/user/user-create-view";
 
 
 const columns = [
@@ -199,16 +199,7 @@ function OverviewUserView() {
                 }}
                 /* 多功能菜单旁新增Dom元素 */
                 toolBarRender={() => [
-                    <Button
-                        key="button"
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                            actionRef.current?.reload();
-                        }}
-                        type="primary"
-                    >
-                        新增
-                    </Button>
+                    <UserCreateFrom />
                 ]}
                 rowKey="id"
                 /* 暂时不太理解 */
