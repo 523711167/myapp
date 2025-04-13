@@ -6,7 +6,6 @@ import axios, {API_ENDPOINTS} from "@utils/axios";
 import {addIfExists} from "@utils/obj";
 import UserCreateFrom from "@sections/overview/user/user-create-view";
 
-
 const columns = [
     {
         dataIndex: 'index',

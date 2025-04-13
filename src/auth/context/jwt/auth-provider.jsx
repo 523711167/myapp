@@ -8,10 +8,8 @@ import {
     setAccessTokenSession,
     setIdTokenSession,
     setRefreshTokenSession,
-    setSession
 } from '@auth/context/jwt/utils';
 import axios, {API_ENDPOINTS} from "@utils/axios";
-
 
 const operationTypes = {
     INITIAL: 'INITIAL',
@@ -116,13 +114,12 @@ export function AuthProvider({children}) {
             scope: 'openid'
         };
 
-        const response = await axios.post(
+        const response = await axios.postForm(
             API_ENDPOINTS.auth.login,
             data,
             {
                 headers: {
                     'authorization': '',
-                    'Content-Type': 'multipart/form-data'
                 }
             }
         );
@@ -208,7 +205,28 @@ export function AuthProvider({children}) {
 
     // LOGOUT
     const logout = useCallback(async () => {
-        setSession(null);
+        const accessToken = sessionStorage.getItem('accessToken');
+        setAccessTokenSession(null)
+        setRefreshTokenSession(null);
+        setIdTokenSession(null);
+        if (accessToken) {
+            const data = {
+                'token': accessToken,
+                'token_type_hint': 'access_token',
+                'client_id': 'admin',
+                'client_secret': '123123',
+            }
+
+            axios.postForm(
+                API_ENDPOINTS.auth.revoke,
+                data,
+                {
+                    headers: {
+                        'authorization': '',
+                    }
+                }
+            )
+        }
         dispatch({
             type: operationTypes.LOGOUT,
         });
@@ -218,10 +236,11 @@ export function AuthProvider({children}) {
 
     const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
 
-    //刷新登录页
-    // 第一次 正常渲染
-    // 第二次 副作用dispatch
-    // 第三次 status变化
+    // 刷新登录页
+    // 第一次 正常渲染,此时checkAuthenticated=unauthenticated、status=loading，在AuthComsumer组件渲染Loading组件
+    // 第二次 开始触发AuthProvider的effect副作用，通过dispatch方式完成INITIAL，再次触发重新渲染，checkAuthenticated不一定更新、但是status必然更新
+    // 第三次 AuthComsumer组件正常渲染children,进入GuestGuard组件,正常渲染JwtLoginPage组件,然后触发Effect函数，
+    // checkAuthenticated=authenticated，则直接路由到首页
     const status = state.loading ? 'loading' : checkAuthenticated;
 
     const memoizedValue = useMemo(

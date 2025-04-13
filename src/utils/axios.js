@@ -21,6 +21,7 @@ export const API_ENDPOINTS = {
         me: '/api/auth/me',
         login: '/api/yuyu-auth/oauth2/token',
         userinfo: '/api/yuyu-auth/userinfo',
+        revoke: '/api/yuyu-auth/oauth2/revoke',
     },
     mail: {
         list: '/api/mail/list',
