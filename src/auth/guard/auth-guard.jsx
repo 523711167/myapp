@@ -4,6 +4,7 @@ import {paths} from '@routes/paths';
 import {useRouter} from '@routes/hook/use-router';
 import {useAuthContext} from "@auth/hooks/use-auth-context";
 import useUserInactive from "@hooks/use-user-inactive";
+import {Modal} from "antd";
 //
 
 
@@ -36,7 +37,7 @@ export default function AuthGuard({ children }) {
 
   const [checked, setChecked] = useState(false);
 
-  useUserInactive(undefined, logout);
+  const inactive = useUserInactive(undefined, logout);
 
   const check = useCallback(() => {
 
@@ -56,12 +57,19 @@ export default function AuthGuard({ children }) {
   useEffect(() => {
     check();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authenticated]);
+  }, []);
 
   //首次渲染直接跳过，需要等待useEffect的执行判断
   if (!checked) {
     return null;
   }
 
-  return <>{children}</>;
+  return (
+      <>
+        <Modal title="系统提示" mask={true} open={!inactive} >
+          <p>由于您长时间不活跃，已自动退出</p>
+        </Modal>
+        {children}
+      </>
+  )
 }

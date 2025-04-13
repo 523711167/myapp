@@ -4,7 +4,7 @@ import {throttle} from "lodash";
 /**
  * 用户活动监测Hook
  */
-function UseUserInactive(timeout = 1 * 20 * 1000, onInactive) {
+function useUserInactive(timeout = 5 * 60 * 1000, onInactive) {
 
     const [lastActivity, setLastActivity] = useState(Date.now());
 
@@ -57,4 +57,4 @@ function UseUserInactive(timeout = 1 * 20 * 1000, onInactive) {
 
 }
 
-export default UseUserInactive;
+export default useUserInactive;
